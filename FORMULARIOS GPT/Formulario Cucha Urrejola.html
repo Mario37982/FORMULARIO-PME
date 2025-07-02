@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Formulario PME - Escuela Cucha Urrejola</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <style>
+    @media print { .no-print { display: none !important; } }
+    body { font-size: 12px; }
+    .status-indicator { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+    .status-saved { background-color: #10B981; }
+    .status-error { background-color: #EF4444; }
+    .status-ready { background-color: #3B82F6; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
+  <div class="max-w-6xl mx-auto p-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center bg-white p-4 rounded mb-6 shadow">
+      <div>
+        <h1 class="text-2xl font-bold text-blue-800"><i class="fas fa-school mr-2"></i>FORMULARIO PME</h1>
+        <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-1"></i>Escuela Cucha Urrejola</p>
+      </div>
+      <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded no-print hover:bg-blue-700">
+        <i class="fas fa-print mr-1"></i>Imprimir
+      </button>
+    </div>
+    <!-- Controls -->
+    <div class="flex space-x-2 mb-4 no-print">
+      <button id="saveBtn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        <i class="fas fa-save mr-1"></i>Guardar Respaldo
+      </button>
+      <button id="loadBtn" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
+        <i class="fas fa-upload mr-1"></i>Cargar Respaldo
+      </button>
+      <button id="clearBtn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+        <i class="fas fa-trash mr-1"></i>Limpiar
+      </button>
+      <input type="file" id="fileInput" accept=".json" class="hidden">
+    </div>
+    <div id="statusIndicator" class="flex items-center bg-gray-200 p-2 rounded mb-6 no-print">
+      <span class="status-indicator status-ready"></span>
+      <span id="statusText">Sistema listo para usar</span>
+    </div>
+    <!-- Form Actions -->
+    <div id="pmeForm"></div>
+    <!-- Validation & Signature -->
+    <div class="mt-8 bg-white p-6 rounded shadow print-page">
+      <h2 class="text-xl font-bold text-gray-800 mb-4"><i class="fas fa-certificate mr-2"></i>VALIDACIÓN Y FIRMA</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div><label class="block text-sm font-medium text-gray-700 mb-1">Nombre Profesional UATP:</label><input type="text" id="uatpName" class="w-full border p-2 rounded"></div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-1">Nombre Director/a:</label><input type="text" id="directorName" class="w-full border p-2 rounded"></div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-1">Fecha de revisión:</label><input type="date" id="reviewDate" class="w-full border p-2 rounded"></div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-1">Próxima revisión:</label><input type="date" id="nextReviewDate" class="w-full border p-2 rounded"></div>
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Observaciones Generales del PME:</label><textarea id="generalObservations" rows="4" class="w-full border p-2 rounded"></textarea></div>
+    </div>
+  </div>
+
+  <script>
+    // Datos de la Escuela Cucha Urrejola (8 acciones completas)
+    const tasksData = [
+      {id:1, title:"Aplicar estrategias de aprendizaje diversificadas mediante actividades en un cuaderno viajero", dimension:"Gestión Pedagógica", sub:"Gestión Curricular / Apoyo al desarrollo de los estudiantes", tasks:[
+        {code:"1.1",desc:"Diseño de actividades diversificadas",percent:"25%",verif:"Planificaciones trimestrales y carpeta de actividades",month:"Abril"},
+        {code:"1.2",desc:"Implementación mensual del Cuaderno Viajero",percent:"30%",verif:"Registro de entregas y bitácora de seguimiento",month:"Noviembre"},
+        {code:"1.3",desc:"Seguimiento y retroalimentación",percent:"20%",verif:"Cuadernos con retroalimentación documentada",month:"Noviembre"},
+        {code:"1.4",desc:"Capacitación interna docente",percent:"10%",verif:"Actas y listas de asistencia",month:"Mayo"},
+        {code:"1.5",desc:"Evaluación trimestral de avances",percent:"15%",verif:"Informes trimestrales y rúbricas",month:"Diciembre"}
+      ]},
+      {id:2, title:"Implementar la medición del avance curricular en Lenguaje y Matemática", dimension:"Gestión Pedagógica", sub:"Gestión Curricular / Apoyo al desarrollo de los estudiantes", tasks:[
+        {code:"2.1",desc:"Revisión de planificaciones docentes",percent:"25%",verif:"Informes de revisión de planificaciones",month:"Abril"},
+        {code:"2.2",desc:"Análisis de cobertura curricular",percent:"30%",verif:"Informes de avance curricular",month:"Julio"},
+        {code:"2.3",desc:"Socialización de resultados",percent:"20%",verif:"Actas de consejos pedagógicos",month:"Agosto"},
+        {code:"2.4",desc:"Aplicación de instrumentos de medición",percent:"15%",verif:"Resultados de instrumentos aplicados",month:"Octubre"},
+        {code:"2.5",desc:"Retroalimentación a docentes",percent:"10%",verif:"Registros de retroalimentación individual",month:"Noviembre"}
+      ]},
+      {id:3, title:"Actualizar y socializar los planes normativos institucionales", dimension:"Liderazgo", sub:"Liderazgo del director", tasks:[
+        {code:"3.1",desc:"Diagnóstico de necesidades",percent:"20%",verif:"Informe de diagnóstico",month:"Abril"},
+        {code:"3.2",desc:"Redacción de actualizaciones",percent:"30%",verif:"Versiones actualizadas de los planes",month:"Mayo"},
+        {code:"3.3",desc:"Organización de jornadas de socialización",percent:"20%",verif:"Actas de jornadas",month:"Junio"},
+        {code:"3.4",desc:"Implementación de actualizaciones",percent:"20%",verif:"Evidencias de aplicación",month:"Julio"},
+        {code:"3.5",desc:"Evaluación de comprensión del personal",percent:"10%",verif:"Encuestas/evaluaciones breves",month:"Noviembre"}
+      ]},
+      {id:4, title:"Sistematización y análisis de datos de aprendizaje y calificaciones", dimension:"Liderazgo", sub:"Liderazgo del director", tasks:[
+        {code:"4.1",desc:"Recolección de datos de aprendizaje",percent:"25%",verif:"Base de datos escolar",month:"Abril"},
+        {code:"4.2",desc:"Análisis trimestral de resultados",percent:"30%",verif:"Informes trimestrales",month:"Julio"},
+        {code:"4.3",desc:"Presentación de datos en consejos",percent:"20%",verif:"Actas de profesores",month:"Agosto"},
+        {code:"4.4",desc:"Toma de decisiones basada en datos",percent:"15%",verif:"Planes de acción",month:"Octubre"},
+        {code:"4.5",desc:"Evaluación proceso de sistematización",percent:"10%",verif:"Encuestas internas",month:"Noviembre"}
+      ]},
+      {id:5, title:"Implementar salidas pedagógicas como experiencias contextualizadas", dimension:"Convivencia Escolar", sub:"Formación / Participación y vida democrática", tasks:[
+        {code:"5.1",desc:"Elaboración plan anual de salidas",percent:"25%",verif:"Plan anual de salidas",month:"Abril"},
+        {code:"5.2",desc:"Gestión de autorizaciones y logística",percent:"20%",verif:"Documentos logísticos",month:"Mayo"},
+        {code:"5.3",desc:"Ejecución de salidas pedagógicas",percent:"30%",verif:"Registros y fotos",month:"Noviembre"},
+        {code:"5.4",desc:"Integración curricular post-salida",percent:"15%",verif:"Informes de aula",month:"Noviembre"},
+        {code:"5.5",desc:"Evaluación de impacto",percent:"10%",verif:"Encuestas estudiantiles",month:"Diciembre"}
+      ]},
+      {id:6, title:"Actualizar e implementar plan de formación ciudadana", dimension:"Convivencia Escolar", sub:"Formación / Participación y vida democrática", tasks:[
+        {code:"6.1",desc:"Actualización Plan de Formación Ciudadana",percent:"30%",verif:"Plan actualizado",month:"Abril"},
+        {code:"6.2",desc:"Ejecución cronograma actividades",percent:"25%",verif:"Informes de ejecución",month:"Noviembre"},
+        {code:"6.3",desc:"Difusión del plan",percent:"20%",verif:"Comunicaciones internas",month:"Noviembre"},
+        {code:"6.4",desc:"Integración curricular",percent:"15%",verif:"Planificaciones de aula",month:"Noviembre"},
+        {code:"6.5",desc:"Evaluación de impacto",percent:"10%",verif:"Evaluaciones de impacto",month:"Diciembre"}
+      ]},
+      {id:7, title:"Implementar Plan de Desarrollo Profesional Docente (DPD)", dimension:"Gestión de Recursos", sub:"Gestión del personal", tasks:[
+        {code:"7.1",desc:"Planificación actividades formativas",percent:"25%",verif:"Calendario anual",month:"Abril"},
+        {code:"7.2",desc:"Ejecución jornadas capacitación",percent:"30%",verif:"Actas y listas",month:"Junio"},
+        {code:"7.3",desc:"Seguimiento en aula",percent:"20%",verif:"Observaciones y retroalimentaciones",month:"Septiembre"},
+        {code:"7.4",desc:"Evaluación de satisfacción docente",percent:"15%",verif:"Encuestas",month:"Octubre"},
+        {code:"7.5",desc:"Ajustes al plan anual",percent:"10%",verif:"Informes finales",month:"Diciembre"}
+      ]},
+      {id:8, title:"Registrar y analizar uso de recursos didácticos y tecnológicos", dimension:"Gestión de Recursos", sub:"Gestión de los recursos educativos", tasks:[
+        {code:"8.1",desc:"Creación bitácora de uso de recursos",percent:"20%",verif:"Bitácora oficial",month:"Abril"},
+        {code:"8.2",desc:"Registro mensual docentes",percent:"30%",verif:"Bitácoras completas",month:"Noviembre"},
+        {code:"8.3",desc:"Análisis en reuniones UTP",percent:"20%",verif:"Informes reuniones",month:"Octubre"},
+        {code:"8.4",desc:"Recomendaciones de mejora",percent:"15%",verif:"Informes sugerencias",month:"Noviembre"},
+        {code:"8.5",desc:"Evaluación anual impacto",percent:"15%",verif:"Informe anual",month:"Diciembre"}
+      ]}
+    ];
+
+    class HybridPMEDataManager {
+      constructor() {
+        this.fileInput = document.getElementById('fileInput');
+        this.storageKey = 'pme_cucha_urrejola_data';
+        this.init();
+      }
+      init() {
+        document.getElementById('saveBtn').addEventListener('click', () => this.exportJSON());
+        document.getElementById('loadBtn').addEventListener('click', () => this.fileInput.click());
+        document.getElementById('clearBtn').addEventListener('click', () => this.clearForm());
+        this.fileInput.addEventListener('change', e => this.importJSON(e));
+      }
+      collectData() {
+        const data = {timestamp:new Date().toISOString(), tasks:{}, observations:{}, validation:{}};
+        document.querySelectorAll('.task-progress, .task-verification').forEach(el => {
+          if(el.value) data.tasks[el.dataset.task] = el.value;
+        });
+        document.querySelectorAll('textarea[data-action]').forEach(el => {
+          if(el.value.trim()) data.observations[el.dataset.action] = el.value;
+        });
+        ['uatpName','directorName','reviewDate','nextReviewDate','generalObservations'].forEach(id => {
+          const el = document.getElementById(id);
+          if(el && el.value.trim()) data.validation[id] = el.value;
+        });
+        return data;
+      }
+      exportJSON() {
+        const dataStr = JSON.stringify(this.collectData(), null, 2);
+        const blob = new Blob([dataStr], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PME_CuchaUrrejola_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.updateStatus('saved','📁 Respaldo exportado');
+      }
+      importJSON(e) {
+        const file = e.target.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const data = JSON.parse(reader.result);
+            this.populateForm(data);
+            this.updateStatus('saved','📥 Respaldo importado');
+          } catch {
+            this.updateStatus('error','❌ Archivo inválido');
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+      }
+      clearForm() {
+        if(!confirm('¿Limpiar todo el formulario?')) return;
+        document.querySelectorAll('select,textarea,input').forEach(el => {
+          if(el.type !== 'file') el.value = '';
+        });
+        this.updateStatus('ready','🗑️ Formulario limpio');
+      }
+      populateForm(data) {
+        if(data.tasks) Object.entries(data.tasks).forEach(([k,v]) => {
+          const el = document.querySelector(`[data-task="${k}"]`);
+          if(el) el.value = v;
+        });
+        if(data.observations) Object.entries(data.observations).forEach(([k,v]) => {
+          const el = document.querySelector(`textarea[data-action="${k}"]`);
+          if(el) el.value = v;
+        });
+        if(data.validation) Object.entries(data.validation).forEach(([id,v]) => {
+          const el = document.getElementById(id);
+          if(el) el.value = v;
+        });
+      }
+      updateStatus(status,msg) {
+        const dot = document.querySelector('.status-indicator');
+        dot.className = `status-indicator status-${status}`;
+        document.getElementById('statusText').textContent = msg;
+        setTimeout(() => {
+          dot.className = 'status-indicator status-ready';
+          document.getElementById('statusText').textContent = 'Sistema listo para usar';
+        }, 3000);
+      }
+    }
+
+    function renderForm() {
+      const container = document.getElementById('pmeForm');
+      tasksData.forEach(a => {
+        const section = document.createElement('div');
+        section.className = 'bg-white rounded shadow mb-6 p-4 print-page';
+        let rows = '';
+        a.tasks.forEach(t => {
+          rows += `<tr>
+            <td class="border p-1 text-sm">${t.code}</td>
+            <td class="border p-1 text-sm">${t.desc}</td>
+            <td class="border p-1 text-sm">${t.percent}</td>
+            <td class="border p-1 text-sm">${t.verif}</td>
+            <td class="border p-1 text-sm">${t.month}</td>
+            <td class="border p-1"><select data-task="${t.code}-progress" class="task-progress w-full p-1 border rounded"><option value="">Seleccionar</option><option>No implementada</option><option>En proceso</option><option>Implementada</option></select></td>
+            <td class="border p-1"><select data-task="${t.code}-verification" class="task-verification w-full p-1 border rounded"><option value="">Seleccionar</option><option>No presente</option><option>Insuficiente</option><option>Adecuado</option></select></td>
+          </tr>`;
+        });
+        section.innerHTML = `
+          <h3 class="font-bold text-blue-800 mb-2">ACCIÓN ${a.id}: ${a.title}</h3>
+          <p class="mb-2"><strong>Dimensión:</strong> ${a.dimension} | <strong>Subdimensión:</strong> ${a.sub}</p>
+          <table class="w-full border-collapse mb-4">
+            <thead class="bg-gray-100"><tr>
+              <th class="border p-2 text-sm">Tarea</th><th class="border p-2 text-sm">Descripción</th><th class="border p-2 text-sm">%</th>
+              <th class="border p-2 text-sm">Medio Verificación</th><th class="border p-2 text-sm">Mes</th><th class="border p-2 text-sm">Avance</th><th class="border p-2 text-sm">Medio</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <textarea data-action="${a.id}" class="w-full border p-2 mb-4 rounded" rows="3" placeholder="Observaciones Acción ${a.id}"></textarea>
+        `;
+        container.appendChild(section);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderForm();
+      new HybridPMEDataManager();
+    });
+  </script>
+</body>
+</html>

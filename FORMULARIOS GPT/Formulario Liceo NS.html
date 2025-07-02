@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Formulario PME - Liceo Bicentenario Nibaldo Sepúlveda</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <style>
+    @media print { .no-print { display: none !important; } }
+    body { font-size: 12px; }
+    .status-indicator { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+    .status-ready  { background-color: #3B82F6; }
+    .status-saved  { background-color: #10B981; }
+    .status-error  { background-color: #EF4444; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
+  <div class="max-w-6xl mx-auto p-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center bg-white p-4 rounded mb-6 shadow">
+      <div>
+        <h1 class="text-2xl font-bold text-blue-800"><i class="fas fa-graduation-cap mr-2"></i>FORMULARIO PME</h1>
+        <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-1"></i>Liceo Bicentenario Nibaldo Sepúlveda</p>
+      </div>
+      <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded no-print hover:bg-blue-700">
+        <i class="fas fa-print mr-1"></i>Imprimir
+      </button>
+    </div>
+    <!-- Controls -->
+    <div class="flex space-x-2 mb-4 no-print">
+      <button id="saveBtn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"><i class="fas fa-save mr-1"></i>Guardar</button>
+      <button id="loadBtn" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700"><i class="fas fa-upload mr-1"></i>Cargar</button>
+      <button id="clearBtn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"><i class="fas fa-trash mr-1"></i>Limpiar</button>
+      <input type="file" id="fileInput" accept=".json" class="hidden">
+    </div>
+    <!-- Status -->
+    <div id="statusIndicator" class="flex items-center space-x-2 bg-gray-200 p-2 rounded mb-6 no-print">
+      <span class="status-indicator status-ready"></span>
+      <span id="statusText">Sistema listo para usar</span>
+    </div>
+    <!-- Form -->
+    <div id="pmeForm"></div>
+    <!-- Validation -->
+    <div class="mt-8 bg-white p-6 rounded shadow print-page">
+      <h2 class="text-xl font-bold text-gray-800 mb-4"><i class="fas fa-certificate mr-2"></i>VALIDACIÓN Y FIRMA</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Profesional UATP:</label>
+          <input type="text" id="uatpName" class="w-full border p-2 rounded">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Director/a:</label>
+          <input type="text" id="directorName" class="w-full border p-2 rounded">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de revisión:</label>
+          <input type="date" id="reviewDate" class="w-full border p-2 rounded">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Próxima revisión:</label>
+          <input type="date" id="nextReviewDate" class="w-full border p-2 rounded">
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones Generales del PME:</label>
+        <textarea id="generalObservations" rows="4" class="w-full border p-2 rounded"></textarea>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Datos completos de las 8 acciones y tareas
+    const tasksData = [
+      {
+        id:1,title:"Implementar un programa de apoyo a las habilidades, actitudes y conocimientos de los estudiantes",
+        dimension:"Gestión Pedagógica",sub:"Gestión Curricular / Apoyo al desarrollo de los estudiantes",
+        tasks:[
+          {code:"1.1",desc:"Aplicar evaluaciones diagnósticas al inicio del año escolar",percent:"15%",verif:"Informe de resultados diagnósticos por nivel y curso",month:"Abril"},
+          {code:"1.2",desc:"Implementar iniciativas del Plan Local de Desarrollo Docente y Formación Ciudadana",percent:"25%",verif:"Registro de ejecución y evaluación en planes institucionales",month:"Julio"},
+          {code:"1.3",desc:"Aplicar evaluaciones intermedias para monitorear avances",percent:"15%",verif:"Resultados de evaluaciones y análisis comparativo",month:"Agosto"},
+          {code:"1.4",desc:"Realizar seguimiento sistemático a los planes de mejora pedagógica",percent:"25%",verif:"Fichas de seguimiento y actas de reuniones técnicas",month:"Octubre"},
+          {code:"1.5",desc:"Organizar jornada pedagógica de cierre",percent:"20%",verif:"Acta de jornada pedagógica y plan de mejoras proyectadas",month:"Diciembre"}
+        ]
+      },
+      {
+        id:2,title:"Desarrollar un sistema de acompañamiento pedagógico colaborativo",
+        dimension:"Gestión Pedagógica",sub:"Gestión Curricular / Apoyo al desarrollo de los estudiantes",
+        tasks:[
+          {code:"2.1",desc:"Diseñar e implementar instrumentos de observación",percent:"20%",verif:"Formatos de observación y pautas validadas",month:"Abril"},
+          {code:"2.2",desc:"Organizar jornadas de estudio de clase por asignatura",percent:"20%",verif:"Registro de asistencia y actas",month:"Mayo"},
+          {code:"2.3",desc:"Capacitar equipo directivo y técnico en estudio de clase",percent:"20%",verif:"Certificados y actas de capacitación",month:"Junio"},
+          {code:"2.4",desc:"Realizar ciclos de retroalimentación a docentes",percent:"25%",verif:"Bitácoras de retroalimentación docente",month:"Octubre"},
+          {code:"2.5",desc:"Sistematizar hallazgos y buenas prácticas",percent:"15%",verif:"Informe de sistematización y propuestas de mejora",month:"Noviembre"}
+        ]
+      },
+      {
+        id:3,title:"Desarrollar instancias de difusión activa de los planes y metas institucionales",
+        dimension:"Liderazgo",sub:"Liderazgo del director / Planificación y gestión de resultados",
+        tasks:[
+          {code:"3.1",desc:"Diseñar plan anual de comunicación institucional",percent:"20%",verif:"Documento validado por el equipo directivo",month:"Abril"},
+          {code:"3.2",desc:"Elaborar materiales gráficos y digitales",percent:"20%",verif:"Registro de materiales difundidos",month:"Mayo"},
+          {code:"3.3",desc:"Realizar jornadas informativas trimestrales",percent:"25%",verif:"Actas y listados de asistencia",month:"Junio"},
+          {code:"3.4",desc:"Difundir planes y metas en reuniones y actos escolares",percent:"20%",verif:"Evidencias fotográficas y registros",month:"Septiembre"},
+          {code:"3.5",desc:"Evaluar comprensión y apropiación mediante encuestas",percent:"15%",verif:"Resultados de encuestas",month:"Noviembre"}
+        ]
+      },
+      {
+        id:4,title:"Implementar un sistema de análisis de datos pedagógicos",
+        dimension:"Liderazgo",sub:"Planificación y gestión de resultados",
+        tasks:[
+          {code:"4.1",desc:"Diseñar protocolo institucional de recolección y análisis de datos",percent:"20%",verif:"Documento oficial aprobado y difundido",month:"Abril"},
+          {code:"4.2",desc:"Capacitar equipo técnico en análisis de datos",percent:"20%",verif:"Actas y materiales de capacitación",month:"Mayo"},
+          {code:"4.3",desc:"Sistematizar resultados de evaluaciones trimestralmente",percent:"20%",verif:"Informes trimestrales archivados",month:"Julio"},
+          {code:"4.4",desc:"Elaborar reportes de avance pedagógico",percent:"25%",verif:"Reportes entregados a docentes",month:"Agosto"},
+          {code:"4.5",desc:"Socializar resultados con equipos docentes y directivos",percent:"15%",verif:"Registros de reuniones y acuerdos",month:"Octubre"}
+        ]
+      },
+      {
+        id:5,title:"Monitorear e implementar estrategias del Plan de Acompañamiento al Rol del Profesor Jefe",
+        dimension:"Convivencia Escolar",sub:"Formación / Convivencia Escolar",
+        tasks:[
+          {code:"5.1",desc:"Aplicar diagnóstico inicial sobre el rol del profesor jefe",percent:"15%",verif:"Informe de diagnóstico por curso",month:"Abril"},
+          {code:"5.2",desc:"Diseñar plan anual para fortalecer el rol del profesor jefe",percent:"20%",verif:"Documento del plan anual",month:"Mayo"},
+          {code:"5.3",desc:"Realizar reuniones mensuales de acompañamiento",percent:"25%",verif:"Actas y listados de asistencia",month:"Noviembre"},
+          {code:"5.4",desc:"Monitorear cumplimiento de actividades del plan",percent:"20%",verif:"Registros de seguimiento trimestral",month:"Octubre"},
+          {code:"5.5",desc:"Evaluar impacto mediante encuestas y análisis cualitativo",percent:"20%",verif:"Informe de evaluación final",month:"Diciembre"}
+        ]
+      },
+      {
+        id:6,title:"Ejecutar acciones formativas y preventivas del Plan de Convivencia Escolar y Orientación",
+        dimension:"Convivencia Escolar",sub:"Formación / Convivencia Escolar",
+        tasks:[
+          {code:"6.1",desc:"Aplicar diagnóstico participativo sobre necesidades formativas",percent:"15%",verif:"Informe de diagnóstico y sistematización",month:"Abril"},
+          {code:"6.2",desc:"Diseñar programación anual de actividades formativas",percent:"20%",verif:"Planificación anual de actividades",month:"Mayo"},
+          {code:"6.3",desc:"Implementar talleres, campañas y jornadas reflexivas",percent:"25%",verif:"Registros de ejecución",month:"Agosto"},
+          {code:"6.4",desc:"Monitorear desarrollo y participación en actividades",percent:"20%",verif:"Reportes de participación y seguimiento",month:"Noviembre"},
+          {code:"6.5",desc:"Evaluar cambios en percepciones y conductas",percent:"20%",verif:"Comparativos de encuestas inicial y final",month:"Diciembre"}
+        ]
+      },
+      {
+        id:7,title:"Coordinar instancias de perfeccionamiento profesional para docentes y asistentes",
+        dimension:"Gestión de Recursos",sub:"Gestión del Personal",
+        tasks:[
+          {code:"7.1",desc:"Aplicar diagnóstico de necesidades formativas",percent:"15%",verif:"Informe de diagnóstico por estamento",month:"Abril"},
+          {code:"7.2",desc:"Diseñar plan anual de perfeccionamiento",percent:"20%",verif:"Plan de perfeccionamiento profesional",month:"Mayo"},
+          {code:"7.3",desc:"Coordinar y ejecutar actividades de capacitación",percent:"25%",verif:"Actas, certificados y registro de asistencia",month:"Julio"},
+          {code:"7.4",desc:"Monitorear participación y cumplimiento",percent:"20%",verif:"Informes de seguimiento por actividad",month:"Octubre"},
+          {code:"7.5",desc:"Evaluar impacto de las capacitaciones",percent:"20%",verif:"Informe de evaluación e impacto",month:"Diciembre"}
+        ]
+      },
+      {
+        id:8,title:"Implementar sistema de evaluación y retroalimentación del desempeño del personal",
+        dimension:"Gestión de Recursos",sub:"Gestión del Personal",
+        tasks:[
+          {code:"8.1",desc:"Diseñar y validar instrumentos de evaluación de desempeño",percent:"20%",verif:"Pautas e instrumentos validados",month:"Abril"},
+          {code:"8.2",desc:"Socializar el sistema de evaluación",percent:"15%",verif:"Actas de jornadas por estamento",month:"Mayo"},
+          {code:"8.3",desc:"Aplicar evaluaciones semestrales",percent:"25%",verif:"Informes y resultados consolidados",month:"Julio"},
+          {code:"8.4",desc:"Realizar reuniones individuales de retroalimentación",percent:"20%",verif:"Registros firmados de reuniones",month:"Octubre"},
+          {code:"8.5",desc:"Analizar resultados institucionales y definir acciones de mejora",percent:"20%",verif:"Informe global con plan de mejora",month:"Noviembre"}
+        ]
+      }
+    ];
+    // Render dinámico
+    function renderForm(){
+      const container=document.getElementById('pmeForm');
+      tasksData.forEach(a=>{
+        const section=document.createElement('div');
+        section.className='bg-white rounded shadow mb-6 p-4 print-page';
+        section.innerHTML=`
+          <h3 class="font-bold text-blue-800 mb-2">ACCIÓN ${a.id}: ${a.title}</h3>
+          <p class="mb-2"><strong>Dimensión:</strong> ${a.dimension} | <strong>Subdimensión:</strong> ${a.sub}</p>
+          <table class="w-full border-collapse mb-4"><thead class="bg-gray-100"><tr>
+            <th class="border p-2">Tarea</th><th class="border p-2">Descripción</th><th class="border p-2">%</th>
+            <th class="border p-2">Medio Verificación</th><th class="border p-2">Mes</th>
+            <th class="border p-2">Avance</th><th class="border p-2">Medio</th>
+          </tr></thead><tbody>
+          ${a.tasks.map(t=>`
+            <tr>
+              <td class="border p-1">${t.code}</td><td class="border p-1">${t.desc}</td><td class="border p-1 texto-center">${t.percent}</td>
+              <td class="border p-1">${t.verif}</td><td class="border p-1 texto-center">${t.month}</td>
+              <td class="border p-1"><select data-task="${t.code}-progress" class="task-progress w-full p-1 border rounded">
+                <option value="">Seleccionar</option><option>No implementada</option><option>En proceso</option><option>Implementada</option>
+              </select></td>
+              <td class="border p-1"><select data-task="${t.code}-verification" class="task-verification w-full p-1 border rounded">
+                <option value="">Seleccionar</option><option>No presente</option><option>Insuficiente</option><option>Adecuado</option>
+              </select></td>
+            </tr>`).join('')}
+          </tbody></table>
+          <textarea data-action="${a.id}" class="w-full border p-2 mb-4 rounded" rows="2" placeholder="Observaciones Acción ${a.id}..."></textarea>`;
+        container.appendChild(section);
+      });
+    }
+    // Data manager
+    class PMEDataManager{
+      constructor(){this.key='pme_nibaldo';this.interval=10000;this.init();}
+      init(){renderForm();this.load();this.setup();setInterval(()=>this.save(),this.interval);this.status('ready','Sistema iniciado');}
+      setup(){document.getElementById('saveBtn').onclick=()=>this.export();document.getElementById('loadBtn').onclick=()=>document.getElementById('fileInput').click();document.getElementById('clearBtn').onclick=()=>this.clear();document.getElementById('fileInput').onchange=e=>this.import(e);document.addEventListener('change',e=>{if(e.target.matches('select,textarea,input'))this.save();});}
+      data(){const d={ts:new Date().toISOString(),tasks:{},obs:{},val:{}};document.querySelectorAll('.task-progress,.task-verification').forEach(s=>s.value&&(d.tasks[s.dataset.task]=s.value));document.querySelectorAll('textarea[data-action]').forEach(t=>t.value&&(d.obs[t.dataset.action]=t.value));['uatpName','directorName','reviewDate','nextReviewDate','generalObservations'].forEach(id=>{const e=document.getElementById(id);e.value&&(d.val[id]=e.value)});return d;}
+      save(){localStorage.setItem(this.key,JSON.stringify(this.data()));this.status('saved','Datos guardados '+new Date().toLocaleTimeString());}
+      load(){const s=localStorage.getItem(this.key);if(s){const d=JSON.parse(s);Object.entries(d.tasks).forEach(([k,v])=>document.querySelector(`[data-task="${k}"]`).value=v);Object.entries(d.obs).forEach(([k,v])=>document.querySelector(`textarea[data-action="${k}"]`).value=v);Object.entries(d.val).forEach(([k,v])=>document.getElementById(k).value=v);this.status('saved','Datos recuperados');}}
+      export(){const b=new Blob([JSON.stringify(this.data(),null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='PME_Nibaldo_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(u);this.status('saved','Respaldo exportado');}
+      import(e){const f=e.target.files[0];if(f){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);localStorage.setItem(this.key,JSON.stringify(d));this.load();this.status('saved','Respaldo importado')}catch{this.status('error','Error importando')}};r.readAsText(f)}e.target.value='';}
+      clear(){if(confirm('Limpiar todo?')){localStorage.removeItem(this.key);document.querySelectorAll('select,textarea,input').forEach(e=>e.value='');this.status('ready','Formulario limpio');}}
+      status(type,msg){document.querySelector('.status-indicator').className='status-indicator status-'+type;document.getElementById('statusText').textContent=msg;}
+    }
+    document.addEventListener('DOMContentLoaded',()=>new PMEDataManager());
+  </script>
+</body>
+</html>
