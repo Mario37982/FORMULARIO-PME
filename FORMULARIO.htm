@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario PME - Escuela Chudal</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+         {
+            .no-print { display: none !important; }
+            body { font-size: 12px; }
+            .print-page { break-inside: avoid; }
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-saved { background-color: #10B981; }
+        .status-pending { background-color: #F59E0B; }
+        .status-error { background-color: #EF4444; }
+        .status-ready { background-color: #3B82F6; }
+        
+        .form-container {
+            max-width: none;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .action-section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+        }
+        
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+        }
+        
+        .dimension-info {
+            background-color: #f0f9ff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .action-title {
+            color: #1e40af;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        
+        .observations-section {
+            margin-top: 24px;
+        }
+        
+        .validation-section {
+            margin-top: 40px;
+            padding: 24px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+        }
+        
+        .control-buttons {
+            margin-bottom: 16px;
+        }
+        
+        .control-buttons button {
+            margin-right: 8px;
+            margin-bottom: 8px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-save { background-color: #059669; color: white; }
+        .btn-save:hover { background-color: #047857; }
+        .btn-load { background-color: #d97706; color: white; }
+        .btn-load:hover { background-color: #b45309; }
+        .btn-clear { background-color: #dc2626; color: white; }
+        .btn-clear:hover { background-color: #b91c1c; }
+        .btn-print { background-color: #2563eb; color: white; }
+        .btn-print:hover { background-color: #1d4ed8; }
+        
+        .status-bar {
+            padding: 8px 16px;
+            background-color: #f3f4f6;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="form-container">
+        <!-- Header Section -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-blue-800 mb-2">
+                        <i class="fas fa-school mr-3"></i>
+                        FORMULARIO DE MONITOREO PME
+                    </h1>
+                    <h2 class="text-xl text-gray-700">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        Escuela Chudal
+                    </h2>
+                </div>
+                
+                <!-- Print Button -->
+                <button onclick="window.print()" class="btn-print no-print">
+                    <i class="fas fa-print mr-2"></i>
+                    IMPRIMIR FORMULARIO
+                </button>
+            </div>
+            
+            <!-- Control Buttons -->
+            <div class="control-buttons no-print">
+                <button id="saveBtn" class="btn-save">
+                    <i class="fas fa-save mr-2"></i>Guardar Respaldo
+                </button>
+                <button id="loadBtn" class="btn-load">
+                    <i class="fas fa-upload mr-2"></i>Cargar Respaldo
+                </button>
+                <button id="clearBtn" class="btn-clear">
+                    <i class="fas fa-trash mr-2"></i>Limpiar Formulario
+                </button>
+                <input type="file" id="fileInput" accept=".json" style="display: none;">
+            </div>
+            
+            <!-- Status Indicator -->
+            <div id="statusIndicator" class="status-bar no-print">
+                <span class="status-indicator status-ready"></span>
+                <span id="statusText">Sistema listo para usar</span>
+            </div>
+        </div>
+
+        <!-- PME Actions -->
+        <div id="pmeForm">
+            <!-- Action 1 -->
+            <div class="action-section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="action-title">
+                    <i class="fas fa-bookmark mr-2"></i>
+                    ACCIÓN 1: Acompañamiento y retroalimentación a docentes
+                </h2>
+                
+                <div class="dimension-info">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Dimensión:</strong> Gestión Pedagógica</div>
+                        <div><strong>Subdimensión:</strong> Gestión Curricular</div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarea</th>
+                            <th>Descripción</th>
+                            <th>%</th>
+                            <th>Medio de Verificación</th>
+                            <th>Mes</th>
+                            <th>Estado Avance</th>
+                            <th>Estado Medio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1.1</td>
+                            <td>Ajuste de protocolo y pauta de acompañamiento</td>
+                            <td>10%</td>
+                            <td>Protocolo de acompañamiento actualizado</td>
+                            <td>Abril</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="1-1-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="1-1-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1.2</td>
+                            <td>Planificación de estrategia de acompañamiento</td>
+                            <td>20%</td>
+                            <td>Cronograma de acompañamientos</td>
+                            <td>Abril</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="1-2-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="1-2-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1.3</td>
+                            <td>Socialización de estrategia con docentes</td>
+                            <td>5%</td>
+                            <td>Actas de socialización</td>
+                            <td>Mayo</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="1-3-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="1-3-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1.4</td>
+                            <td>Implementación de acompañamientos al aula</td>
+                            <td>30%</td>
+                            <td>Pautas de acompañamiento y actas</td>
+                            <td>Junio</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="1-4-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="1-4-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1.5</td>
+                            <td>Sistematización de datos de acompañamientos</td>
+                            <td>15%</td>
+                            <td>Informe cuantitativo y cualitativo</td>
+                            <td>Agosto</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="1-5-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="1-5-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1.6</td>
+                            <td>Jornadas de monitoreo a la estrategia</td>
+                            <td>10%</td>
+                            <td>Acta de reunión con acuerdos</td>
+                            <td>Octubre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="1-6-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="1-6-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1.7</td>
+                            <td>Evaluación de la estrategia de acompañamiento</td>
+                            <td>10%</td>
+                            <td>Informe final</td>
+                            <td>Diciembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="1-7-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="1-7-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="observations-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones de la Acción 1:</label>
+                    <textarea class="w-full p-3 border border-gray-300 rounded-lg observations" data-action="1" rows="3" placeholder="Escriba aquí sus observaciones sobre la implementación de esta acción..."></textarea>
+                </div>
+            </div>
+
+            <!-- Action 2 -->
+            <div class="action-section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="action-title">
+                    <i class="fas fa-bookmark mr-2"></i>
+                    ACCIÓN 2: Evaluación y análisis de los resultados de aprendizaje
+                </h2>
+                
+                <div class="dimension-info">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Dimensión:</strong> Gestión Pedagógica</div>
+                        <div><strong>Subdimensión:</strong> Gestión Curricular</div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarea</th>
+                            <th>Descripción</th>
+                            <th>%</th>
+                            <th>Medio de Verificación</th>
+                            <th>Mes</th>
+                            <th>Estado Avance</th>
+                            <th>Estado Medio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2.1</td>
+                            <td>Diseño de base de datos y cronograma DIA</td>
+                            <td>10%</td>
+                            <td>Base de datos y cronograma</td>
+                            <td>Abril</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="2-1-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="2-1-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2.2</td>
+                            <td>Aplicación de pruebas DIA diagnóstico</td>
+                            <td>5%</td>
+                            <td>Registros de aplicación</td>
+                            <td>Abril</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="2-2-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="2-2-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2.3</td>
+                            <td>Sistematización y análisis DIA diagnóstico</td>
+                            <td>15%</td>
+                            <td>Informes de resultados y conclusiones</td>
+                            <td>Mayo</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="2-3-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="2-3-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2.4</td>
+                            <td>Seguimiento estudiantes peligro repitencia</td>
+                            <td>15%</td>
+                            <td>Plan de apoyo y registros</td>
+                            <td>Junio</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="2-4-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="2-4-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2.5</td>
+                            <td>Sistematización rendimiento escolar interno</td>
+                            <td>15%</td>
+                            <td>Informes primer semestre</td>
+                            <td>Julio</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="2-5-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="2-5-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2.6</td>
+                            <td>Aplicación de pruebas DIA intermedia</td>
+                            <td>5%</td>
+                            <td>Registros de aplicación</td>
+                            <td>Agosto</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="2-6-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="2-6-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2.7</td>
+                            <td>Sistematización y análisis DIA intermedia</td>
+                            <td>15%</td>
+                            <td>Informes DIA intermedio</td>
+                            <td>Septiembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="2-7-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="2-7-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2.8</td>
+                            <td>Aplicación de pruebas DIA final</td>
+                            <td>5%</td>
+                            <td>Registros de aplicación</td>
+                            <td>Noviembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="2-8-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="2-8-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2.9</td>
+                            <td>Sistematización y análisis DIA final</td>
+                            <td>15%</td>
+                            <td>Informe final DIA</td>
+                            <td>Diciembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="2-9-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="2-9-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="observations-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones de la Acción 2:</label>
+                    <textarea class="w-full p-3 border border-gray-300 rounded-lg observations" data-action="2" rows="3" placeholder="Escriba aquí sus observaciones sobre la implementación de esta acción..."></textarea>
+                </div>
+            </div>
+
+            <!-- Action 3 -->
+            <div class="action-section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="action-title" style="color: #059669;">
+                    <i class="fas fa-bookmark mr-2"></i>
+                    ACCIÓN 3: Potenciando el capital cultural, artístico y deportivo de los estudiantes
+                </h2>
+                
+                <div class="dimension-info" style="background-color: #ecfdf5;">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Dimensión:</strong> Liderazgo</div>
+                        <div><strong>Subdimensión:</strong> Liderazgo del director</div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarea</th>
+                            <th>Descripción</th>
+                            <th>%</th>
+                            <th>Medio de Verificación</th>
+                            <th>Mes</th>
+                            <th>Estado Avance</th>
+                            <th>Estado Medio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>3.1</td>
+                            <td>Creación de Plan Cultural, Artístico y Deportivo</td>
+                            <td>15%</td>
+                            <td>Plan Cultural, Artístico y Deportivo</td>
+                            <td>Abril</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="3-1-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="3-1-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3.2</td>
+                            <td>Ejecución de Talleres Extraescolares SEP</td>
+                            <td>10%</td>
+                            <td>Planificación y nóminas de asistencia</td>
+                            <td>Mayo</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="3-2-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="3-2-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3.3</td>
+                            <td>Ajuste Planificación Salidas Pedagógicas</td>
+                            <td>5%</td>
+                            <td>Planificación Salidas Pedagógicas</td>
+                            <td>Mayo</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="3-3-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="3-3-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3.4</td>
+                            <td>Realización de Salidas Pedagógicas</td>
+                            <td>10%</td>
+                            <td>Evaluación y autorización DEPROV</td>
+                            <td>Junio</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="3-4-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="3-4-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3.5</td>
+                            <td>Participación en JDE 2025 y eventos culturales</td>
+                            <td>28%</td>
+                            <td>Evidencias de participación: fotos, actas</td>
+                            <td>Julio</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="3-5-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="3-5-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3.6</td>
+                            <td>Elaboración y aplicación de encuesta sobre impacto</td>
+                            <td>25%</td>
+                            <td>Informe de encuesta</td>
+                            <td>Noviembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="3-6-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="3-6-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3.7</td>
+                            <td>Socialización de resultados</td>
+                            <td>5%</td>
+                            <td>Acta de socialización</td>
+                            <td>Diciembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="3-7-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="3-7-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3.8</td>
+                            <td>Monitoreo y evaluación de la acción</td>
+                            <td>2%</td>
+                            <td>Informe final</td>
+                            <td>Diciembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="3-8-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="3-8-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="observations-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones de la Acción 3:</label>
+                    <textarea class="w-full p-3 border border-gray-300 rounded-lg observations" data-action="3" rows="3" placeholder="Escriba aquí sus observaciones sobre la implementación de esta acción..."></textarea>
+                </div>
+            </div>
+
+            <!-- Action 4 -->
+            <div class="action-section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="action-title" style="color: #7c3aed;">
+                    <i class="fas fa-bookmark mr-2"></i>
+                    ACCIÓN 4: Evaluación del Plan de Gestión de la Convivencia Escolar
+                </h2>
+                
+                <div class="dimension-info" style="background-color: #faf5ff;">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Dimensión:</strong> Convivencia Escolar</div>
+                        <div><strong>Subdimensión:</strong> Gestión de la Convivencia Escolar</div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarea</th>
+                            <th>Descripción</th>
+                            <th>%</th>
+                            <th>Medio de Verificación</th>
+                            <th>Mes</th>
+                            <th>Estado Avance</th>
+                            <th>Estado Medio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>4.1</td>
+                            <td>Análisis y diagnóstico acciones año anterior</td>
+                            <td>10%</td>
+                            <td>Informe diagnóstico</td>
+                            <td>Abril</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="4-1-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="4-1-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4.2</td>
+                            <td>Elaboración plan de acción anual actualizado</td>
+                            <td>10%</td>
+                            <td>Plan anual de Convivencia Escolar</td>
+                            <td>Abril</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="4-2-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="4-2-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4.3</td>
+                            <td>Socialización actividades del plan con comunidad</td>
+                            <td>10%</td>
+                            <td>Actas y evidencias fotográficas</td>
+                            <td>Mayo</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="4-3-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="4-3-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4.4</td>
+                            <td>Ejecución de actividades del plan</td>
+                            <td>30%</td>
+                            <td>Registros de actividades y asistencia</td>
+                            <td>Julio</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="4-4-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="4-4-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4.5</td>
+                            <td>Seguimiento y monitoreo a las acciones</td>
+                            <td>20%</td>
+                            <td>Informe de seguimiento</td>
+                            <td>Octubre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="4-5-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="4-5-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4.6</td>
+                            <td>Evaluación del impacto de las actividades</td>
+                            <td>20%</td>
+                            <td>Informe de evaluación anual</td>
+                            <td>Diciembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="4-6-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="4-6-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="observations-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones de la Acción 4:</label>
+                    <textarea class="w-full p-3 border border-gray-300 rounded-lg observations" data-action="4" rows="3" placeholder="Escriba aquí sus observaciones sobre la implementación de esta acción..."></textarea>
+                </div>
+            </div>
+
+            <!-- Action 5 -->
+            <div class="action-section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="action-title" style="color: #7c3aed;">
+                    <i class="fas fa-bookmark mr-2"></i>
+                    ACCIÓN 5: Fortalecer la participación de la comunidad educativa
+                </h2>
+                
+                <div class="dimension-info" style="background-color: #faf5ff;">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Dimensión:</strong> Convivencia Escolar</div>
+                        <div><strong>Subdimensión:</strong> Participación y Vida Democrática</div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarea</th>
+                            <th>Descripción</th>
+                            <th>%</th>
+                            <th>Medio de Verificación</th>
+                            <th>Mes</th>
+                            <th>Estado Avance</th>
+                            <th>Estado Medio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>5.1</td>
+                            <td>Diseño de estrategia de participación escolar</td>
+                            <td>10%</td>
+                            <td>Documento de estrategia y planificación</td>
+                            <td>Abril</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="5-1-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="5-1-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5.2</td>
+                            <td>Organización de jornadas participativas</td>
+                            <td>25%</td>
+                            <td>Actas, fotos y encuestas</td>
+                            <td>Mayo</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="5-2-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="5-2-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5.3</td>
+                            <td>Creación consejos escolares y CGPA</td>
+                            <td>15%</td>
+                            <td>Actas de constitución y reglamentos</td>
+                            <td>Junio</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="5-3-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="5-3-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5.4</td>
+                            <td>Seguimiento participación efectiva en instancias</td>
+                            <td>30%</td>
+                            <td>Registros de participación y acuerdos</td>
+                            <td>Octubre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="5-4-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="5-4-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5.5</td>
+                            <td>Evaluación del impacto en la participación</td>
+                            <td>20%</td>
+                            <td>Encuestas a la comunidad educativa</td>
+                            <td>Noviembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="5-5-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="5-5-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="observations-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones de la Acción 5:</label>
+                    <textarea class="w-full p-3 border border-gray-300 rounded-lg observations" data-action="5" rows="3" placeholder="Escriba aquí sus observaciones sobre la implementación de esta acción..."></textarea>
+                </div>
+            </div>
+
+            <!-- Action 6 -->
+            <div class="action-section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="action-title" style="color: #4f46e5;">
+                    <i class="fas fa-bookmark mr-2"></i>
+                    ACCIÓN 6: Implementar el Plan de Formación Ciudadana
+                </h2>
+                
+                <div class="dimension-info" style="background-color: #eef2ff;">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Dimensión:</strong> Convivencia Escolar</div>
+                        <div><strong>Subdimensión:</strong> Formación</div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarea</th>
+                            <th>Descripción</th>
+                            <th>%</th>
+                            <th>Medio de Verificación</th>
+                            <th>Mes</th>
+                            <th>Estado Avance</th>
+                            <th>Estado Medio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>6.1</td>
+                            <td>Actualización del plan de formación ciudadana</td>
+                            <td>15%</td>
+                            <td>Plan actualizado</td>
+                            <td>Abril</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="6-1-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="6-1-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>6.2</td>
+                            <td>Difusión del plan a toda la comunidad</td>
+                            <td>10%</td>
+                            <td>Actas de reuniones y registro digital</td>
+                            <td>Mayo</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="6-2-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="6-2-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>6.3</td>
+                            <td>Implementación de actividades del plan</td>
+                            <td>40%</td>
+                            <td>Bitácoras y evidencias fotográficas</td>
+                            <td>Julio</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="6-3-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="6-3-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>6.4</td>
+                            <td>Seguimiento al desarrollo de las actividades</td>
+                            <td>20%</td>
+                            <td>Registros y observaciones sistemáticas</td>
+                            <td>Octubre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="6-4-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="6-4-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>6.5</td>
+                            <td>Evaluación del impacto de las actividades</td>
+                            <td>15%</td>
+                            <td>Informe de evaluación del plan</td>
+                            <td>Diciembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="6-5-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="6-5-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="observations-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones de la Acción 6:</label>
+                    <textarea class="w-full p-3 border border-gray-300 rounded-lg observations" data-action="6" rows="3" placeholder="Escriba aquí sus observaciones sobre la implementación de esta acción..."></textarea>
+                </div>
+            </div>
+
+            <!-- Action 7 -->
+            <div class="action-section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="action-title" style="color: #ea580c;">
+                    <i class="fas fa-bookmark mr-2"></i>
+                    ACCIÓN 7: Fortalecer el trabajo colaborativo del equipo docente y técnico
+                </h2>
+                
+                <div class="dimension-info" style="background-color: #fef3e2;">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Dimensión:</strong> Gestión de Recursos</div>
+                        <div><strong>Subdimensión:</strong> Gestión del Personal</div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarea</th>
+                            <th>Descripción</th>
+                            <th>%</th>
+                            <th>Medio de Verificación</th>
+                            <th>Mes</th>
+                            <th>Estado Avance</th>
+                            <th>Estado Medio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>7.1</td>
+                            <td>Diseño calendario reuniones técnico-pedagógicas</td>
+                            <td>10%</td>
+                            <td>Calendario validado</td>
+                            <td>Abril</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="7-1-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="7-1-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>7.2</td>
+                            <td>Organización jornadas de reflexión pedagógica</td>
+                            <td>30%</td>
+                            <td>Actas, fotos y acuerdos pedagógicos</td>
+                            <td>Mayo</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="7-2-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="7-2-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>7.3</td>
+                            <td>Aplicación encuestas sobre trabajo colaborativo</td>
+                            <td>20%</td>
+                            <td>Resultados de encuestas</td>
+                            <td>Julio</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="7-3-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="7-3-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>7.4</td>
+                            <td>Elaboración informe sobre necesidades fortalecimiento</td>
+                            <td>20%</td>
+                            <td>Informe consolidado</td>
+                            <td>Agosto</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="7-4-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="7-4-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>7.5</td>
+                            <td>Implementación de acciones de fortalecimiento</td>
+                            <td>20%</td>
+                            <td>Evidencias de aplicación de mejoras</td>
+                            <td>Octubre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="7-5-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="7-5-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="observations-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones de la Acción 7:</label>
+                    <textarea class="w-full p-3 border border-gray-300 rounded-lg observations" data-action="7" rows="3" placeholder="Escriba aquí sus observaciones sobre la implementación de esta acción..."></textarea>
+                </div>
+            </div>
+
+            <!-- Action 8 -->
+            <div class="action-section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="action-title" style="color: #ea580c;">
+                    <i class="fas fa-bookmark mr-2"></i>
+                    ACCIÓN 8: Fortalecer la asistencia y permanencia de los estudiantes
+                </h2>
+                
+                <div class="dimension-info" style="background-color: #fef3e2;">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Dimensión:</strong> Gestión de Recursos</div>
+                        <div><strong>Subdimensión:</strong> Gestión de Recursos Educativos</div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarea</th>
+                            <th>Descripción</th>
+                            <th>%</th>
+                            <th>Medio de Verificación</th>
+                            <th>Mes</th>
+                            <th>Estado Avance</th>
+                            <th>Estado Medio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>8.1</td>
+                            <td>Diseño del plan de asistencia escolar 2025</td>
+                            <td>15%</td>
+                            <td>Documento plan asistencia</td>
+                            <td>Abril</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="8-1-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="8-1-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>8.2</td>
+                            <td>Difusión estrategias de asistencia y permanencia</td>
+                            <td>15%</td>
+                            <td>Actas y registros de difusión</td>
+                            <td>Mayo</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="8-2-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="8-2-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>8.3</td>
+                            <td>Implementación de estrategias preventivas</td>
+                            <td>25%</td>
+                            <td>Evidencias de actividades y seguimiento</td>
+                            <td>Julio</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="8-3-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="8-3-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>8.4</td>
+                            <td>Aplicación estrategias correctivas casos críticos</td>
+                            <td>25%</td>
+                            <td>Fichas individuales de seguimiento</td>
+                            <td>Septiembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="8-4-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="8-4-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>8.5</td>
+                            <td>Evaluación del impacto de las acciones</td>
+                            <td>20%</td>
+                            <td>Informe anual de asistencia y permanencia</td>
+                            <td>Diciembre</td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-progress" data-task="8-5-progress">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-implementada">No implementada</option>
+                                    <option value="en-proceso">En proceso</option>
+                                    <option value="implementada">Implementada</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="w-full p-1 border rounded task-verification" data-task="8-5-verification">
+                                    <option value="">Seleccionar</option>
+                                    <option value="no-presente">No presente</option>
+                                    <option value="insuficiente">Insuficiente</option>
+                                    <option value="adecuado">Adecuado</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="observations-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones de la Acción 8:</label>
+                    <textarea class="w-full p-3 border border-gray-300 rounded-lg observations" data-action="8" rows="3" placeholder="Escriba aquí sus observaciones sobre la implementación de esta acción..."></textarea>
+                </div>
+            </div>
+
+            <!-- Validation Section -->
+            <div class="validation-section">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-certificate mr-2"></i>
+                    VALIDACIÓN Y FIRMA
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Profesional UATP:</label>
+                        <input type="text" class="w-full p-3 border border-gray-300 rounded-lg" id="uatpName" placeholder="Ingrese nombre del profesional UATP">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Director/a del establecimiento:</label>
+                        <input type="text" class="w-full p-3 border border-gray-300 rounded-lg" id="directorName" placeholder="Ingrese nombre del director/a">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de revisión:</label>
+                        <input type="date" class="w-full p-3 border border-gray-300 rounded-lg" id="reviewDate">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Próxima revisión:</label>
+                        <input type="date" class="w-full p-3 border border-gray-300 rounded-lg" id="nextReviewDate">
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones Generales del PME:</label>
+                    <textarea class="w-full p-3 border border-gray-300 rounded-lg" id="generalObservations" rows="4" placeholder="Escriba aquí las observaciones generales sobre el avance del Plan de Mejoramiento Educativo..."></textarea>
+                </div>
+
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <p class="text-sm text-blue-800 text-center">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>Nota:</strong> Para imprimir este formulario, utilice el botón "IMPRIMIR FORMULARIO" en la parte superior o la opción de impresión de su navegador web.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de persistencia de datos híbrido
+        class HybridPMEDataManager {
+            constructor() {
+                this.storageKey = 'pme_escuela_chudal_data';
+                this.autoSaveInterval = 10000; // 10 segundos
+                this.isInitialized = false;
+                this.environment = this.detectEnvironment();
+                this.storageOptions = this.getStorageOptions();
+                
+                this.initializeSystem();
+            }
+
+            detectEnvironment() {
+                // Detectar si estamos en un entorno local o en línea
+                const isLocal = window.location.protocol === 'file:' || 
+                               window.location.hostname === 'localhost' ||
+                               window.location.hostname === '127.0.0.1';
+                
+                return {
+                    isLocal: isLocal,
+                    isOnline: navigator.onLine,
+                    hasFileAPI: !!(window.File && window.FileReader && window.FileList && window.Blob),
+                    canDownload: true
+                };
+            }
+
+            getStorageOptions() {
+                const options = {
+                    localStorage: false,
+                    sessionStorage: false,
+                    indexedDB: false
+                };
+
+                // Verificar localStorage
+                try {
+                    const test = '__test__';
+                    localStorage.setItem(test, test);
+                    localStorage.removeItem(test);
+                    options.localStorage = true;
+                } catch (e) {
+                    console.warn('localStorage no disponible');
+                }
+
+                // Verificar sessionStorage
+                try {
+                    const test = '__test__';
+                    sessionStorage.setItem(test, test);
+                    sessionStorage.removeItem(test);
+                    options.sessionStorage = true;
+                } catch (e) {
+                    console.warn('sessionStorage no disponible');
+                }
+
+                // Verificar IndexedDB
+                options.indexedDB = !!(window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB);
+
+                return options;
+            }
+
+            initializeSystem() {
+                try {
+                    this.updateStatus('pending', 'Inicializando sistema...');
+                    
+                    // Configurar event listeners
+                    this.initializeEventListeners();
+                    
+                    // Cargar datos existentes
+                    this.loadData();
+                    
+                    // Iniciar guardado automático
+                    this.startAutoSave();
+                    
+                    this.isInitialized = true;
+                    this.updateStatus('ready', 'Sistema listo para usar');
+                    
+                } catch (error) {
+                    console.error('Error inicializando sistema:', error);
+                    this.updateStatus('error', 'Error al inicializar sistema');
+                }
+            }
+
+            initializeEventListeners() {
+                // Event listeners para todos los campos
+                document.addEventListener('change', (e) => {
+                    if (e.target.matches('select, textarea, input')) {
+                        this.saveData();
+                    }
+                });
+
+                // Botones de control
+                document.getElementById('saveBtn').addEventListener('click', () => this.exportData());
+                document.getElementById('loadBtn').addEventListener('click', () => this.triggerFileInput());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearAllData());
+                document.getElementById('fileInput').addEventListener('change', (e) => this.importData(e));
+            }
+
+            saveData() {
+                if (!this.isInitialized) return;
+                
+                try {
+                    const data = this.collectFormData();
+                    let saveSuccess = false;
+                    
+                    // Intentar guardar en localStorage
+                    if (this.storageOptions.localStorage) {
+                        try {
+                            localStorage.setItem(this.storageKey, JSON.stringify(data));
+                            saveSuccess = true;
+                        } catch (e) {
+                            console.warn('Error guardando en localStorage:', e);
+                        }
+                    }
+                    
+                    // Intentar guardar en sessionStorage como respaldo
+                    if (this.storageOptions.sessionStorage) {
+                        try {
+                            sessionStorage.setItem(this.storageKey, JSON.stringify(data));
+                            saveSuccess = true;
+                        } catch (e) {
+                            console.warn('Error guardando en sessionStorage:', e);
+                        }
+                    }
+                    
+                    // Usar memoria como último recurso
+                    if (!saveSuccess) {
+                        this.memoryStorage = data;
+                        saveSuccess = true;
+                    }
+                    
+                    if (saveSuccess) {
+                        this.updateStatus('saved', '✅ Datos guardados - ' + new Date().toLocaleTimeString());
+                    } else {
+                        this.updateStatus('error', '❌ Error al guardar datos');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error saving data:', error);
+                    this.updateStatus('error', '❌ Error al guardar datos');
+                }
+            }
+
+            loadData() {
+                try {
+                    let data = null;
+                    
+                    // Intentar cargar desde localStorage
+                    if (this.storageOptions.localStorage) {
+                        try {
+                            const stored = localStorage.getItem(this.storageKey);
+                            if (stored) data = JSON.parse(stored);
+                        } catch (e) {
+                            console.warn('Error cargando desde localStorage:', e);
+                        }
+                    }
+                    
+                    // Si no hay datos en localStorage, intentar sessionStorage
+                    if (!data && this.storageOptions.sessionStorage) {
+                        try {
+                            const stored = sessionStorage.getItem(this.storageKey);
+                            if (stored) data = JSON.parse(stored);
+                        } catch (e) {
+                            console.warn('Error cargando desde sessionStorage:', e);
+                        }
+                    }
+                    
+                    // Intentar memoria como último recurso
+                    if (!data && this.memoryStorage) {
+                        data = this.memoryStorage;
+                    }
+                    
+                    if (data) {
+                        this.populateForm(data);
+                        this.updateStatus('saved', '📥 Datos recuperados exitosamente');
+                    } else {
+                        this.updateStatus('ready', 'Formulario listo para usar');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    this.updateStatus('error', '❌ Error al recuperar datos');
+                }
+            }
+
+            collectFormData() {
+                const data = {
+                    timestamp: new Date().toISOString(),
+                    environment: this.environment,
+                    tasks: {},
+                    observations: {},
+                    validation: {}
+                };
+
+                // Recopilar estados de tareas
+                document.querySelectorAll('.task-progress, .task-verification').forEach(select => {
+                    if (select.value) {
+                        data.tasks[select.dataset.task] = select.value;
+                    }
+                });
+
+                // Recopilar observaciones
+                document.querySelectorAll('.observations').forEach(textarea => {
+                    if (textarea.value.trim()) {
+                        data.observations[textarea.dataset.action] = textarea.value;
+                    }
+                });
+
+                // Recopilar datos de validación
+                const validationFields = ['uatpName', 'directorName', 'reviewDate', 'nextReviewDate', 'generalObservations'];
+                validationFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field && field.value.trim()) {
+                        data.validation[fieldId] = field.value;
+                    }
+                });
+
+                return data;
+            }
+
+            populateForm(data) {
+                // Restaurar estados de tareas
+                if (data.tasks) {
+                    Object.entries(data.tasks).forEach(([taskId, value]) => {
+                        const element = document.querySelector(`[data-task="${taskId}"]`);
+                        if (element) element.value = value;
+                    });
+                }
+
+                // Restaurar observaciones
+                if (data.observations) {
+                    Object.entries(data.observations).forEach(([actionId, value]) => {
+                        const element = document.querySelector(`.observations[data-action="${actionId}"]`);
+                        if (element) element.value = value;
+                    });
+                }
+
+                // Restaurar datos de validación
+                if (data.validation) {
+                    Object.entries(data.validation).forEach(([fieldId, value]) => {
+                        const element = document.getElementById(fieldId);
+                        if (element) element.value = value;
+                    });
+                }
+            }
+
+            exportData() {
+                try {
+                    const data = this.collectFormData();
+                    const filename = `PME_Escuela_Chudal_${new Date().toISOString().slice(0, 10)}.json`;
+                    
+                    if (this.environment.hasFileAPI) {
+                        // Método moderno para navegadores compatibles
+                        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        
+                        URL.revokeObjectURL(url);
+                        this.updateStatus('saved', '📁 Respaldo exportado exitosamente');
+                    } else {
+                        // Método alternativo para navegadores más antiguos
+                        const dataStr = JSON.stringify(data, null, 2);
+                        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                        
+                        const exportFileDefaultName = filename;
+                        const linkElement = document.createElement('a');
+                        linkElement.setAttribute('href', dataUri);
+                        linkElement.setAttribute('download', exportFileDefaultName);
+                        linkElement.click();
+                        
+                        this.updateStatus('saved', '📁 Respaldo exportado exitosamente');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error exporting data:', error);
+                    this.updateStatus('error', '❌ Error al exportar respaldo');
+                }
+            }
+
+            triggerFileInput() {
+                document.getElementById('fileInput').click();
+            }
+
+            importData(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        this.populateForm(data);
+                        this.saveData();
+                        this.updateStatus('saved', '📥 Respaldo cargado exitosamente');
+                    } catch (error) {
+                        console.error('Error importing data:', error);
+                        this.updateStatus('error', '❌ Error al cargar respaldo - Verifique el formato del archivo');
+                    }
+                };
+                
+                reader.onerror = () => {
+                    this.updateStatus('error', '❌ Error al leer el archivo');
+                };
+                
+                reader.readAsText(file);
+                
+                // Limpiar el input para permitir cargar el mismo archivo nuevamente
+                event.target.value = '';
+            }
+
+            clearAllData() {
+                if (confirm('¿Está seguro de que desea limpiar todos los datos del formulario? Esta acción no se puede deshacer.')) {
+                    try {
+                        // Limpiar todos los campos del formulario
+                        document.querySelectorAll('select, textarea, input').forEach(element => {
+                            if (element.type !== 'file') {
+                                element.value = '';
+                            }
+                        });
+                        
+                        // Limpiar almacenamiento
+                        if (this.storageOptions.localStorage) {
+                            localStorage.removeItem(this.storageKey);
+                        }
+                        if (this.storageOptions.sessionStorage) {
+                            sessionStorage.removeItem(this.storageKey);
+                        }
+                        if (this.memoryStorage) {
+                            delete this.memoryStorage;
+                        }
+                        
+                        this.updateStatus('ready', '🗑️ Formulario limpiado exitosamente');
+                        
+                    } catch (error) {
+                        console.error('Error clearing data:', error);
+                        this.updateStatus('error', '❌ Error al limpiar formulario');
+                    }
+                }
+            }
+
+            startAutoSave() {
+                if (this.autoSaveInterval > 0) {
+                    setInterval(() => {
+                        if (this.isInitialized) {
+                            this.saveData();
+                        }
+                    }, this.autoSaveInterval);
+                }
+            }
+
+            updateStatus(status, message) {
+                const statusIndicator = document.getElementById('statusIndicator');
+                const statusText = document.getElementById('statusText');
+                
+                if (statusIndicator && statusText) {
+                    const indicator = statusIndicator.querySelector('.status-indicator');
+                    
+                    // Remover clases anteriores
+                    indicator.classList.remove('status-saved', 'status-pending', 'status-error', 'status-ready');
+                    
+                    // Agregar nueva clase
+                    indicator.classList.add(`status-${status}`);
+                    
+                    // Actualizar texto
+                    statusText.textContent = message;
+                }
+            }
+        }
+
+        // Inicializar el sistema cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pequeña demora para asegurar que todo esté cargado
+            setTimeout(() => {
+                window.pmeDataManager = new HybridPMEDataManager();
+            }, 100);
+        });
+
+        // Guardar datos antes de cerrar la página
+        window.addEventListener('beforeunload', function() {
+            if (window.pmeDataManager && window.pmeDataManager.isInitialized) {
+                window.pmeDataManager.saveData();
+            }
+        });
+    </script>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDob3F3kJOMlVoZV5zZmL9x1eQ5xrhacYZ9Zrd8nRmfwEL8G4CWZBpwIv5W06vKm7wEElNSYFwKBrD2vHfgKGPWbTVG7OjDGCsrTODmhVfGiGiLcOLBuXwZlbOEjO3o0pBso7fJ2%2FkAoq07ubccnBvz%2BeqnUIzjc%2BYD4aLudxK844%2Fd2pkHTjiBX%2FX%2BeggR3oavA7vzIZ7c0%2Bw%2FgXQP3FXRRBsDSeFWJ6jozFbiiHJRrxJdYfhoEVMvcspGcFaXW0VQsOsTJiftBjAxVqmvyLrQAU6qFLdncqlkC2mFmhZ69wNN61PVxq9E6iuo01ywsd9h4uWiLS%2BHUojCngEMqoA3PCsFHVJ7i8aUHU4DOppSGyDPEtKP6J1ehDIytdUQ4BXNnMtx%2B2BVGRiyI%2B7FVfByKeCMMKL4Dcin5dvDtpSNwcM0Un1up4vKQORXkViD9R6R265G9fgRy4nJunLe9LIjpmHjhB%2ByVcyGxZAT0XxcnKrSbNPtaeOAZV0amkZUAq3fZX0LQ0YGLPw8sJy6gIyL8%3D";
+        window.__genspark_locale = "es-ES";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDob3F3kJOMlVoZV5zZmL9x1eQ5xrhacYZ9Zrd8nRmfwEL8G4CWZBpwIv5W06vKm7wEElNSYFwKBrD2vHfgKGPWbTVG7OjDGCsrTODmhVfGiGiLcOLBuXwZlbOEjO3o0pBso7fJ2/kAoq07ubccnBvz+eqnUIzjc+YD4aLudxK844/d2pkHTjiBX/X+eggR3oavA7vzIZ7c0+w/gXQP3FXRRBsDSeFWJ6jozFbiiHJRrxJdYfhoEVMvcspGcFaXW0VQsOsTJiftBjAxVqmvyLrQAU6qFLdncqlkC2mFmhZ69wNN61PVxq9E6iuo01ywsd9h4uWiLS+HUojCngEMqoA3PCsFHVJ7i8aUHU4DOppSGyDPEtKP6J1ehDIytdUQ4BXNnMtx+2BVGRiyI+7FVfByKeCMMKL4Dcin5dvDtpSNwcM0Un1up4vKQORXkViD9R6R265G9fgRy4nJunLe9LIjpmHjhB+yVcyGxZAT0XxcnKrSbNPtaeOAZV0amkZUAq3fZX0LQ0YGLPw8sJy6gIyL8=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
